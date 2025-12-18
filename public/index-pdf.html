@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML to PDF Converter - Pixel Perfect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles-pdf.css">
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">📄</span>
+                <h1>HTML to PDF</h1>
+            </div>
+            <div class="tagline">Pixel-Perfect Conversion</div>
+        </header>
+
+        <main class="main">
+            <!-- Input Section -->
+            <section class="input-section">
+                <div class="tabs">
+                    <button class="tab-button active" data-tab="paste">Paste HTML</button>
+                    <button class="tab-button" data-tab="upload">Upload File</button>
+                </div>
+
+                <!-- Paste Tab -->
+                <div id="paste-tab" class="tab-content active">
+                    <div class="form-group">
+                        <label for="html-input">HTML Content</label>
+                        <textarea id="html-input" placeholder="Paste your HTML code here..." rows="12"></textarea>
+                        <div class="helper-text">
+                            <span id="char-count">0 characters</span>
+                        </div>
+                    </div>
+                    <button id="clear-btn" class="btn btn-secondary">Clear</button>
+                </div>
+
+                <!-- Upload Tab -->
+                <div id="upload-tab" class="tab-content">
+                    <div id="upload-area" class="upload-area">
+                        <div class="upload-content">
+                            <span class="upload-icon">📁</span>
+                            <h3>Drop HTML file here</h3>
+                            <p>or click to browse</p>
+                            <input type="file" id="file-input" accept=".html,.htm" hidden>
+                        </div>
+                        <div id="file-info" class="file-info" style="display: none;">
+                            <span class="file-icon">📄</span>
+                            <span id="file-name">filename.html</span>
+                            <button id="remove-file-btn" class="btn-icon">✕</button>
+                        </div>
+                    </div>
+                    <button id="browse-btn" class="btn btn-secondary">Browse Files</button>
+                </div>
+            </section>
+
+            <!-- Preview Section -->
+            <section class="preview-section">
+                <div class="section-header">
+                    <h2>Live Preview</h2>
+                    <button id="refresh-preview" class="btn-icon" title="Refresh Preview">🔄</button>
+                </div>
+                <div class="preview-container">
+                    <div id="preview-empty" class="preview-empty">
+                        <span class="preview-icon">👁️</span>
+                        <p>Preview will appear here</p>
+                    </div>
+                    <iframe id="preview-frame" class="preview-frame"></iframe>
+                </div>
+            </section>
+
+            <!-- Options Section -->
+            <section class="options-section">
+                <h3>PDF Options</h3>
+                <div class="options-grid">
+                    <div class="form-group">
+                        <label for="pdf-format">Page Format</label>
+                        <select id="pdf-format">
+                            <option value="A4" selected>A4</option>
+                            <option value="A3">A3</option>
+                            <option value="Letter">Letter</option>
+                            <option value="Legal">Legal</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="pdf-orientation">Orientation</label>
+                        <select id="pdf-orientation">
+                            <option value="portrait" selected>Portrait</option>
+                            <option value="landscape">Landscape</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="pdf-filename">Filename (optional)</label>
+                        <input type="text" id="pdf-filename" placeholder="my-document.pdf">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Convert Button -->
+            <div class="convert-section">
+                <button id="convert-btn" class="btn btn-primary btn-large">
+                    <span class="btn-icon">🚀</span>
+                    Convert to PDF
+                </button>
+            </div>
+
+            <!-- Status Message -->
+            <div id="status-message" class="status-message" style="display: none;">
+                <span id="status-icon"></span>
+                <span id="status-text"></span>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>Powered by Puppeteer • Pixel-Perfect PDF Generation</p>
+        </footer>
+    </div>
+
+    <script src="app-pdf.js"></script>
+</body>
+
+</html>

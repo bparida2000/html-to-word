@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML to Word Converter - High Fidelity Document Conversion</title>
+  <meta name="description"
+    content="Convert HTML to Word documents with high fidelity preservation of styles, formatting, and layout">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <h1 class="title">
+          <span class="icon">📄</span>
+          HTML to Word Converter
+        </h1>
+        <p class="subtitle">Convert HTML documents to Word format with high fidelity</p>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Input Section -->
+      <section class="input-section">
+        <div class="section-header">
+          <h2>Input HTML</h2>
+          <div class="tabs">
+            <button class="tab-button active" data-tab="paste">Paste HTML</button>
+            <button class="tab-button" data-tab="upload">Upload File</button>
+          </div>
+        </div>
+
+        <!-- Paste Tab -->
+        <div class="tab-content active" id="paste-tab">
+          <div class="textarea-wrapper">
+            <textarea id="html-input"
+              placeholder="Paste your HTML code here...&#10;&#10;Example:&#10;&lt;h1&gt;My Document&lt;/h1&gt;&#10;&lt;p&gt;This is a &lt;strong&gt;sample&lt;/strong&gt; paragraph.&lt;/p&gt;"
+              spellcheck="false"></textarea>
+            <div class="textarea-footer">
+              <span class="char-count" id="char-count">0 characters</span>
+              <button class="btn-clear" id="clear-btn">Clear</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Upload Tab -->
+        <div class="tab-content" id="upload-tab">
+          <div class="upload-area" id="upload-area">
+            <input type="file" id="file-input" accept=".html" hidden>
+            <div class="upload-content">
+              <span class="upload-icon">📁</span>
+              <p class="upload-text">Drag & drop your HTML file here</p>
+              <p class="upload-subtext">or</p>
+              <button class="btn-secondary" id="browse-btn">Browse Files</button>
+            </div>
+            <div class="file-info" id="file-info" style="display: none;">
+              <span class="file-icon">📄</span>
+              <span class="file-name" id="file-name"></span>
+              <button class="btn-remove" id="remove-file-btn">✕</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Options -->
+        <div class="options-section">
+          <h3>Options</h3>
+          <div class="options-grid">
+            <div class="option-item">
+              <label for="orientation">Page Orientation</label>
+              <select id="orientation">
+                <option value="portrait">Portrait</option>
+                <option value="landscape">Landscape</option>
+              </select>
+            </div>
+            <div class="option-item">
+              <label for="doc-title">Document Title</label>
+              <input type="text" id="doc-title" placeholder="Optional">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Preview Section -->
+      <section class="preview-section">
+        <div class="section-header">
+          <h2>Live Preview</h2>
+          <button class="btn-icon" id="refresh-preview" title="Refresh Preview">↻</button>
+        </div>
+        <div class="preview-wrapper">
+          <iframe id="preview-frame" sandbox="allow-same-origin"></iframe>
+          <div class="preview-empty" id="preview-empty">
+            <span class="preview-icon">👁️</span>
+            <p>Your HTML preview will appear here</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Conversion Buttons -->
+    <div class="action-section">
+      <button id="convert-btn" class="btn btn-primary">
+        <span class="btn-icon">⚡</span>
+        Convert to Word
+      </button>
+
+      <button id="convert-pdf-btn" class="btn btn-success">
+        <span class="btn-icon">📄</span>
+        Convert to PDF
+      </button>
+    </div>
+
+    <!-- Status Messages -->
+    <div class="status-message" id="status-message" style="display: none;">
+      <span class="status-icon" id="status-icon"></span>
+      <span class="status-text" id="status-text"></span>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>High-fidelity HTML to DOCX conversion • Preserves formatting, styles, and layout</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+
+</html>

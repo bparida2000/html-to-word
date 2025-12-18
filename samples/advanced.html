@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Advanced HTML Features</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f9fafb;
+            color: #1f2937;
+        }
+
+        h1 {
+            color: #1e40af;
+            font-size: 32px;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        h2 {
+            color: #7c3aed;
+            border-left: 4px solid #7c3aed;
+            padding-left: 15px;
+            margin-top: 30px;
+        }
+
+        h3 {
+            color: #059669;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        th {
+            background-color: #3b82f6;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 10px 12px;
+            border: 1px solid #e5e7eb;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f3f4f6;
+        }
+
+        .info-box {
+            background-color: #dbeafe;
+            border-left: 4px solid #3b82f6;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .warning-box {
+            background-color: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        code {
+            background-color: #1f2937;
+            color: #10b981;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .nested-list {
+            margin-left: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Advanced HTML to Word Conversion</h1>
+
+    <div class="info-box">
+        <strong>ℹ️ Information:</strong> This document demonstrates advanced HTML features including tables, nested
+        lists, styled boxes, and complex formatting.
+    </div>
+
+    <h2>1. Complex Tables</h2>
+
+    <p>Tables with formatting and alternating row colors:</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Laptop Pro</td>
+                <td>Electronics</td>
+                <td>$1,299</td>
+                <td>In Stock</td>
+            </tr>
+            <tr>
+                <td>Wireless Mouse</td>
+                <td>Accessories</td>
+                <td>$29</td>
+                <td>In Stock</td>
+            </tr>
+            <tr>
+                <td>USB-C Hub</td>
+                <td>Accessories</td>
+                <td>$49</td>
+                <td>Limited</td>
+            </tr>
+            <tr>
+                <td>Monitor 27"</td>
+                <td>Electronics</td>
+                <td>$399</td>
+                <td>Out of Stock</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>2. Nested Lists</h2>
+
+    <p>Multi-level organizational structure:</p>
+
+    <ul>
+        <li><strong>Frontend Development</strong>
+            <ul class="nested-list">
+                <li>HTML5
+                    <ul class="nested-list">
+                        <li>Semantic elements</li>
+                        <li>Forms and validation</li>
+                    </ul>
+                </li>
+                <li>CSS3
+                    <ul class="nested-list">
+                        <li>Flexbox</li>
+                        <li>Grid</li>
+                        <li>Animations</li>
+                    </ul>
+                </li>
+                <li>JavaScript
+                    <ul class="nested-list">
+                        <li>ES6+ features</li>
+                        <li>DOM manipulation</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li><strong>Backend Development</strong>
+            <ul class="nested-list">
+                <li>Node.js</li>
+                <li>Express.js</li>
+                <li>Database management</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h2>3. Styled Content Boxes</h2>
+
+    <div class="info-box">
+        <h3>📘 Quick Tip</h3>
+        <p>Using colored boxes helps organize information and draw attention to important points. This blue box is
+            perfect for tips and informational content.</p>
+    </div>
+
+    <div class="warning-box">
+        <h3>⚠️ Important Notice</h3>
+        <p>Warning boxes like this one are excellent for highlighting critical information that requires special
+            attention from readers.</p>
+    </div>
+
+    <h2>4. Code Snippets</h2>
+
+    <p>Inline code example: <code>const result = convertHTML(input)</code></p>
+
+    <p>This demonstrates how code formatting is preserved in the conversion process.</p>
+
+    <h2>5. Mixed Content</h2>
+
+    <p>This section combines various elements:</p>
+
+    <ol>
+        <li>Ordered lists with <strong>bold</strong> and <em>italic</em> text</li>
+        <li>Links to external resources: <a href="https://example.com">Example Website</a></li>
+        <li>Special characters: © 2024 • α β γ • → ← ↑ ↓</li>
+        <li>Formatted numbers: 1,234,567.89</li>
+    </ol>
+
+    <h2>6. Summary Table</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Feature</th>
+                <th>Supported</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Text Formatting</td>
+                <td>✅ Yes</td>
+                <td>Bold, italic, underline, colors</td>
+            </tr>
+            <tr>
+                <td>Tables</td>
+                <td>✅ Yes</td>
+                <td>With borders and styling</td>
+            </tr>
+            <tr>
+                <td>Lists</td>
+                <td>✅ Yes</td>
+                <td>Ordered, unordered, nested</td>
+            </tr>
+            <tr>
+                <td>Colors</td>
+                <td>✅ Yes</td>
+                <td>Text and background colors</td>
+            </tr>
+            <tr>
+                <td>Images</td>
+                <td>✅ Yes</td>
+                <td>Embedded images</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr style="margin: 40px 0; border: 1px solid #e5e7eb;">
+
+    <p style="text-align: center; color: #6b7280; font-size: 14px;">
+        <em>Document generated for HTML to Word conversion testing</em>
+    </p>
+</body>
+
+</html>

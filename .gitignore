@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Output files
+output/
+*.docx
+*.pdf
+
+# OS files
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Environment
+.env
+.env.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# Installer files
+*.pkg
