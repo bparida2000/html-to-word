@@ -18,6 +18,13 @@ const statusText = document.getElementById('status-text');
 const orientationSelect = document.getElementById('orientation');
 const docTitleInput = document.getElementById('doc-title');
 
+// URL input elements
+const urlInput = document.getElementById('url-input');
+const fetchUrlBtn = document.getElementById('fetch-url-btn');
+const urlStatus = document.getElementById('url-status');
+const urlStatusIcon = document.getElementById('url-status-icon');
+const urlStatusText = document.getElementById('url-status-text');
+
 // Tab switching
 const tabButtons = document.querySelectorAll('.tab-button');
 const tabContents = document.querySelectorAll('.tab-content');
@@ -61,6 +68,18 @@ function setupEventListeners() {
     document.getElementById('convert-pdf-btn').addEventListener('click', convertToPDF);
     clearBtn.addEventListener('click', clearInput);
     refreshPreviewBtn.addEventListener('click', updatePreview);
+
+    // URL fetch
+    if (fetchUrlBtn) {
+        fetchUrlBtn.addEventListener('click', fetchFromURL);
+    }
+    if (urlInput) {
+        urlInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                fetchFromURL();
+            }
+        });
+    }
 }
 
 // Tab Switching
@@ -145,6 +164,72 @@ function removeFile() {
     document.querySelector('.upload-content').style.display = 'flex';
     fileInfo.style.display = 'none';
     updatePreview();
+}
+
+// Fetch HTML from URL
+async function fetchFromURL() {
+    const url = urlInput.value.trim();
+
+    if (!url) {
+        showUrlStatus('error', '❌', 'Please enter a URL');
+        return;
+    }
+
+    // Basic URL validation
+    try {
+        new URL(url);
+    } catch (e) {
+        showUrlStatus('error', '❌', 'Invalid URL format');
+        return;
+    }
+
+    // Show loading state
+    fetchUrlBtn.disabled = true;
+    fetchUrlBtn.textContent = 'Fetching...';
+    showUrlStatus('loading', '⏳', 'Capturing page... This may take a few seconds');
+
+    try {
+        const response = await fetch('/capture-url', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ url }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Failed to capture page');
+        }
+
+        // Set the captured HTML
+        currentHTML = data.html;
+
+        // Update preview
+        updatePreview();
+
+        // Show success
+        showUrlStatus('success', '✅', `Captured ${(data.size / 1024).toFixed(1)}KB - Ready to convert!`);
+        showStatus('success', '✅', 'Page captured successfully! Click Convert to generate document.');
+
+    } catch (error) {
+        console.error('URL fetch error:', error);
+        showUrlStatus('error', '❌', error.message || 'Failed to capture page');
+    } finally {
+        fetchUrlBtn.disabled = false;
+        fetchUrlBtn.textContent = 'Fetch Page';
+    }
+}
+
+// Show URL status message
+function showUrlStatus(type, icon, message) {
+    if (!urlStatus) return;
+
+    urlStatus.style.display = 'flex';
+    urlStatus.className = `url-status ${type}`;
+    urlStatusIcon.textContent = icon;
+    urlStatusText.textContent = message;
 }
 
 // Clear Input

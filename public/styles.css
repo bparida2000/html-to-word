@@ -311,6 +311,100 @@ body {
   background: rgba(239, 68, 68, 0.1);
 }
 
+/* URL Input Area */
+.url-input-area {
+  background: var(--color-bg-secondary);
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-xl);
+  text-align: center;
+  transition: all var(--transition-base);
+}
+
+.url-input-area:hover {
+  border-color: var(--color-accent);
+  background: rgba(99, 102, 241, 0.05);
+}
+
+.url-icon {
+  font-size: 3rem;
+  opacity: 0.8;
+  display: block;
+  margin-bottom: var(--spacing-sm);
+}
+
+.url-text {
+  color: var(--color-text-primary);
+  font-weight: 500;
+  margin-bottom: var(--spacing-xs);
+}
+
+.url-subtext {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.url-input-wrapper {
+  display: flex;
+  gap: var(--spacing-sm);
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.url-field {
+  flex: 1;
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  color: var(--color-text-primary);
+  font-size: 0.875rem;
+  transition: all var(--transition-base);
+}
+
+.url-field:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.url-field::placeholder {
+  color: var(--color-text-secondary);
+  opacity: 0.7;
+}
+
+.url-status {
+  margin-top: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm);
+  background: var(--color-bg-primary);
+  border-radius: var(--radius-sm);
+  animation: fadeIn 0.3s ease;
+}
+
+.url-status.success {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--color-success);
+}
+
+.url-status.error {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--color-error);
+}
+
+.url-status-icon {
+  font-size: 1.25rem;
+}
+
+.url-status-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
 /* Options */
 .options-section {
   margin-top: var(--spacing-md);
