@@ -4,14 +4,13 @@ const fs = require('fs');
 const { validateHTML } = require('./converter-pandoc');
 
 // Helper to convert px to Docx generic sizes (pixels generally)
-const pxToEmu = (px) => Math.round(px * 9525);
 const pxToTwip = (px) => Math.round(px * 15);
 const pxToHp = (px) => Math.max(2, Math.round(px * 1.5)); // half-points for font sizes
 
 async function convertHTMLToWordHF(htmlContent, options = {}) {
     let browser;
     try {
-        console.log('🚀 Starting High-Fidelity Word Conversion...');
+        console.log('🚀 Starting Natural Flow High-Fidelity Word Conversion...');
 
         // Define page dimensions
         let pageWidthPx = 794;  // A4 Portrait width in px (at 96 DPI)
@@ -35,7 +34,7 @@ async function convertHTMLToWordHF(htmlContent, options = {}) {
         await page.setContent(htmlContent, { waitUntil: ['load', 'networkidle0'], timeout: 60000 });
 
         // Extract layout data (text nodes)
-        console.log('📏 Extracting precise layout...');
+        console.log('📏 Extracting logical document stream...');
         const layoutData = await page.evaluate(() => {
             const items = [];
 
@@ -44,9 +43,11 @@ async function convertHTMLToWordHF(htmlContent, options = {}) {
                 return hex.length === 1 ? "0" + hex : hex;
             }
 
-            // Walk the DOM for all visible text nodes
+            // Walk the DOM for all visible text nodes in flow order
             const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_ALL, null, false);
             let node;
+            let lastY = 0;
+
             while (node = walker.nextNode()) {
                 if (node.nodeType === Node.TEXT_NODE) {
                     const text = node.textContent.trim();
@@ -72,12 +73,17 @@ async function convertHTMLToWordHF(htmlContent, options = {}) {
                         colorHex = toHex(match[1]) + toHex(match[2]) + toHex(match[3]);
                     }
 
+                    // Calculate vertical gap from the previous block to create spacing equivalents
+                    const gapY = Math.max(0, rect.top - lastY);
+                    lastY = rect.bottom;
+
                     items.push({
                         text: text,
                         x: rect.left,
                         y: rect.top,
                         width: rect.width,
                         height: rect.height,
+                        gapY: gapY,
                         fontSize: parseFloat(style.fontSize),
                         fontFamily: style.fontFamily,
                         color: colorHex,
@@ -93,21 +99,19 @@ async function convertHTMLToWordHF(htmlContent, options = {}) {
         // Determine total height and number of pages
         let totalHeightPx = await page.evaluate(() => document.documentElement.scrollHeight);
 
-        // Also consider the lowest text node
         for (const item of layoutData) {
             if (item.y + item.height > totalHeightPx) {
                 totalHeightPx = item.y + item.height;
             }
         }
 
-        // Expand height slightly to not cut off borders, taking minimum 1 page
         totalHeightPx = Math.max(pageHeightPx, totalHeightPx);
         const numPages = Math.ceil(totalHeightPx / pageHeightPx);
         console.log(`📄 Document will be ${numPages} page(s). Total height: ${totalHeightPx}px`);
 
         // Hide text and capture screenshots for each page
         await page.addStyleTag({ content: '* { color: transparent !important; text-shadow: none !important; } ::placeholder { color: transparent !important; }' });
-        await new Promise(r => setTimeout(r, 200)); // wait for styles to apply
+        await new Promise(r => setTimeout(r, 200));
 
         const pageImages = [];
         console.log('📸 Capturing background images...');
@@ -125,23 +129,21 @@ async function convertHTMLToWordHF(htmlContent, options = {}) {
         await browser.close();
         browser = null;
 
-        // Build the Word Document
         console.log('🔨 Assembling high-fidelity Word document...');
+
+        // Create document Sections
         const docSections = [];
 
         for (let i = 0; i < numPages; i++) {
             const pageYStart = i * pageHeightPx;
             const pageYEnd = (i + 1) * pageHeightPx;
 
-            // Background image for this page
+            // Background image for this entire section
             const backgroundParagraph = new docx.Paragraph({
                 children: [
                     new docx.ImageRun({
                         data: pageImages[i],
-                        transformation: {
-                            width: pageWidthPx,
-                            height: pageHeightPx,
-                        },
+                        transformation: { width: pageWidthPx, height: pageHeightPx },
                         floating: {
                             horizontalPosition: { offset: 0 },
                             verticalPosition: { offset: 0 },
@@ -152,31 +154,27 @@ async function convertHTMLToWordHF(htmlContent, options = {}) {
                 ]
             });
 
-            // Find texts belonging to this page
+            // Isolate items on this page
             const pageTexts = layoutData.filter(item => {
                 const centerY = item.y + (item.height / 2);
                 return centerY >= pageYStart && centerY < pageYEnd;
             });
 
-            const textParagraphs = pageTexts.map(item => {
-                // Determine text alignment mapping
+            // Map layout items to NORMAL flowing paragraphs (NO text boxes)
+            const textParagraphs = pageTexts.map((item, index) => {
                 let align = docx.AlignmentType.LEFT;
                 if (item.alignment === 'center') align = docx.AlignmentType.CENTER;
                 else if (item.alignment === 'right') align = docx.AlignmentType.RIGHT;
                 else if (item.alignment === 'justify') align = docx.AlignmentType.JUSTIFIED;
 
+                // Emulate visual gaps and margins directly in the paragraph spacing and indentation
+                // So the text ends up exactly where the design elements are, but perfectly editable.
                 return new docx.Paragraph({
-                    frame: {
-                        position: {
-                            x: pxToTwip(item.x),
-                            y: pxToTwip(item.y - pageYStart) // relative to the page
-                        },
-                        width: pxToTwip(item.width * 1.1), // small buffer to avoid weird Word word-wrapping
-                        height: pxToTwip(item.height * 1.5), // buffer height
-                        anchor: { horizontal: docx.FrameAnchorType.PAGE, vertical: docx.FrameAnchorType.PAGE },
-                        alignment: { x: docx.HorizontalPositionAlign.LEFT, y: docx.VerticalPositionAlign.TOP }
-                    },
                     alignment: align,
+                    indent: { left: pxToTwip(item.x) },
+                    spacing: {
+                        before: index === 0 ? pxToTwip(item.y - pageYStart) : pxToTwip(item.gapY),
+                    },
                     children: [
                         new docx.TextRun({
                             text: item.text,
@@ -184,7 +182,7 @@ async function convertHTMLToWordHF(htmlContent, options = {}) {
                             color: item.color,
                             bold: item.bold,
                             italics: item.italic,
-                            font: "Arial" // simplified fallback font
+                            font: "Arial"
                         })
                     ]
                 });
@@ -193,10 +191,7 @@ async function convertHTMLToWordHF(htmlContent, options = {}) {
             docSections.push({
                 properties: {
                     page: {
-                        size: {
-                            width: pxToTwip(pageWidthPx),
-                            height: pxToTwip(pageHeightPx)
-                        },
+                        size: { width: pxToTwip(pageWidthPx), height: pxToTwip(pageHeightPx) },
                         margin: { top: 0, right: 0, bottom: 0, left: 0 }
                     }
                 },
@@ -207,7 +202,7 @@ async function convertHTMLToWordHF(htmlContent, options = {}) {
         const doc = new docx.Document({ sections: docSections });
         const finalBuffer = await docx.Packer.toBuffer(doc);
 
-        console.log(`✅ High-Fidelity Word document generated (${(finalBuffer.length / 1024).toFixed(1)} KB)`);
+        console.log(`✅ Flow High-Fidelity Word document generated (${(finalBuffer.length / 1024).toFixed(1)} KB)`);
         return finalBuffer;
 
     } catch (error) {
@@ -217,9 +212,6 @@ async function convertHTMLToWordHF(htmlContent, options = {}) {
     }
 }
 
-/**
- * Convert HTML file to DOCX using high-fidelity approach
- */
 async function convertHTMLFileToWordHF(inputPath, outputPath, options = {}) {
     const htmlContent = await fs.promises.readFile(inputPath, 'utf-8');
     const buffer = await convertHTMLToWordHF(htmlContent, options);
@@ -227,8 +219,4 @@ async function convertHTMLFileToWordHF(inputPath, outputPath, options = {}) {
     return outputPath;
 }
 
-module.exports = {
-    convertHTMLToWordHF,
-    convertHTMLFileToWordHF,
-    validateHTML
-};
+module.exports = { convertHTMLToWordHF, convertHTMLFileToWordHF, validateHTML };
