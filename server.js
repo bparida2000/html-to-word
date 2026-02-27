@@ -2,8 +2,9 @@ const express = require('express');
 const multer = require('multer');
 const cors = require('cors');
 const path = require('path');
-const { convertHTML: convertToWord, convertHTMLFile, validateHTML } = require('./converter-pandoc');
+const { convertHTMLToWordHF: convertToWord, convertHTMLFileToWordHF: convertHTMLFile, validateHTML } = require('./converter-docx-hf');
 const { convertHTMLToPDF } = require('./converter-pdf');
+const { applySlideFormatting } = require('./html-preprocessor');
 
 const app = express();
 const PORT = process.env.PORT || 3005;
@@ -252,7 +253,12 @@ app.post('/convert', async (req, res) => {
         }
 
         // Convert HTML to DOCX
-        const docxBuffer = await convertToWord(html, options);
+        let finalHtml = html;
+        if (options.format === 'slide') {
+            finalHtml = applySlideFormatting(finalHtml);
+        }
+
+        const docxBuffer = await convertToWord(finalHtml, options);
 
         // Set headers for file download with RFC 6266 compliance
         const filename = 'converted-document.docx';
@@ -289,9 +295,14 @@ app.post('/upload', upload.single('htmlFile'), async (req, res) => {
         const options = {};
         if (req.body.orientation) options.orientation = req.body.orientation;
         if (req.body.title) options.title = req.body.title;
+        if (req.body.format) options.format = req.body.format;
 
         // Convert HTML to Word (DOCX)
-        const docxBuffer = await convertToWord(htmlContent, options);
+        let finalHtml = htmlContent;
+        if (options.format === 'slide') {
+            finalHtml = applySlideFormatting(finalHtml);
+        }
+        const docxBuffer = await convertToWord(finalHtml, options);
 
         // Generate filename from original file
         const originalName = path.parse(req.file.originalname).name;
@@ -339,7 +350,13 @@ app.post('/convert-pdf', async (req, res) => {
 
         // Convert HTML to PDF using Puppeteer
         console.log('Converting to PDF...');
-        const pdfBuffer = await convertHTMLToPDF(html, options);
+
+        let finalHtml = html;
+        if (options.format === 'slide') {
+            finalHtml = applySlideFormatting(finalHtml);
+        }
+
+        const pdfBuffer = await convertHTMLToPDF(finalHtml, options);
 
         // Set headers for file download
         const filename = options.filename || 'converted-document.pdf';

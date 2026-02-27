@@ -15,6 +15,7 @@ const refreshPreviewBtn = document.getElementById('refresh-preview');
 const statusMessage = document.getElementById('status-message');
 const statusIcon = document.getElementById('status-icon');
 const statusText = document.getElementById('status-text');
+const formatSelect = document.getElementById('format');
 const orientationSelect = document.getElementById('orientation');
 const docTitleInput = document.getElementById('doc-title');
 
@@ -68,6 +69,18 @@ function setupEventListeners() {
     document.getElementById('convert-pdf-btn').addEventListener('click', convertToPDF);
     clearBtn.addEventListener('click', clearInput);
     refreshPreviewBtn.addEventListener('click', updatePreview);
+
+    // Format selection change
+    if (formatSelect) {
+        formatSelect.addEventListener('change', () => {
+            if (formatSelect.value === 'slide') {
+                orientationSelect.value = 'landscape';
+                orientationSelect.disabled = true;
+            } else {
+                orientationSelect.disabled = false;
+            }
+        });
+    }
 
     // URL fetch
     if (fetchUrlBtn) {
@@ -279,6 +292,7 @@ async function convertToWord() {
         const options = {
             title: docTitleInput.value.trim() || 'Converted Document',
             orientation: orientationSelect.value,
+            format: formatSelect ? formatSelect.value : 'A4',
         };
 
         // Send conversion request
@@ -373,7 +387,7 @@ async function convertToPDF() {
         // Prepare options
         const options = {
             orientation: orientationSelect.value,
-            format: 'A4',
+            format: formatSelect ? formatSelect.value : 'A4',
         };
 
         // Determine filename

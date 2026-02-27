@@ -240,10 +240,101 @@ async function preprocessHTML(html) {
     }
 }
 
+/**
+ * Apply Slide presentation formatting
+ */
+function applySlideFormatting(html) {
+    console.log('Applying Slide Formatting (16:9)...');
+    const dom = new JSDOM(html);
+    const doc = dom.window.document;
+    
+    // Create style block if not exists
+    let style = doc.querySelector('style');
+    if (!style) {
+        style = doc.createElement('style');
+        if (doc.head) {
+            doc.head.appendChild(style);
+        } else {
+            const head = doc.createElement('head');
+            head.appendChild(style);
+            doc.insertBefore(head, doc.body);
+        }
+    }
+
+    style.textContent += `
+        @page {
+            size: 10in 5.625in; /* 16:9 ratio */
+            margin: 0.5in;
+        }
+        body {
+            font-size: 24pt !important;
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+            line-height: 1.5 !important;
+            color: #1a202c !important;
+            background-color: #ffffff !important;
+        }
+        h1 {
+            font-size: 44pt !important;
+            color: #2d3748 !important;
+            page-break-before: always !important;
+            margin-top: 1in !important;
+            text-align: center !important;
+            font-weight: 700 !important;
+        }
+        h1:first-of-type, :root > body > h1:first-child {
+            page-break-before: auto !important;
+        }
+        h2 {
+            font-size: 36pt !important;
+            color: #4a5568 !important;
+            margin-top: 0.8in !important;
+            margin-bottom: 0.4in !important;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.2in;
+            page-break-after: avoid !important;
+        }
+        h3 {
+            font-size: 28pt !important;
+            color: #718096 !important;
+            margin-top: 0.4in !important;
+            page-break-after: avoid !important;
+        }
+        p, li {
+            font-size: 24pt !important;
+            margin-bottom: 0.3in !important;
+        }
+        ul, ol {
+            margin-left: 0.5in !important;
+            margin-bottom: 0.4in !important;
+        }
+        li {
+            margin-bottom: 0.2in !important;
+        }
+        img {
+            max-width: 100% !important;
+            max-height: 4in !important;
+            object-fit: contain !important;
+            display: block !important;
+            margin: 0.2in auto !important;
+        }
+        table {
+            width: 100% !important;
+            font-size: 20pt !important;
+            margin-bottom: 0.4in !important;
+        }
+        th, td {
+            padding: 0.15in !important;
+        }
+    `;
+
+    return dom.serialize();
+}
+
 module.exports = {
     preprocessHTML,
     replaceFontAwesomeIcons,
     embedExternalImages,
     replaceCSSVariables,
     simplifyLayout,
+    applySlideFormatting,
 };
